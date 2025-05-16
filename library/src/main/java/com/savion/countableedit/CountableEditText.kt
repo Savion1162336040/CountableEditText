@@ -21,6 +21,7 @@ class CountableEditText : LinearLayout {
     private var cetCountable = true
     private var countTextSize = 40f
     private var countTextColor = Color.BLACK
+    private var cetEditable = true
     private val textWatcher by lazy(LazyThreadSafetyMode.NONE) {
         object : SimpleTextWatcher() {
             override fun afterTextChanged(s: Editable?) {
@@ -68,6 +69,7 @@ class CountableEditText : LinearLayout {
             drawsize = t.getDimension(R.styleable.CountableEditText_cet_drawsize, drawsize)
             maxLength = t.getInt(R.styleable.CountableEditText_cet_max_length, 0)
             cetCountable = t.getBoolean(R.styleable.CountableEditText_cet_countable, cetCountable)
+            cetEditable = t.getBoolean(R.styleable.CountableEditText_cet_editable, cetEditable)
             t.recycle()
         }
 
@@ -97,6 +99,7 @@ class CountableEditText : LinearLayout {
         editView.isSingleLine = true
         editView.setText(text)
         editView.setBackgroundResource(0)
+        editView.isEnabled = cetEditable
         editView.setPadding(0)
         editView.gravity = Gravity.CENTER_VERTICAL or Gravity.START
         addView(editView, LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT).apply {

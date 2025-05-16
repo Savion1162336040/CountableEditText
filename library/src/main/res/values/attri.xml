@@ -14,6 +14,7 @@
         <attr name="cet_hint" format="string" />
         <attr name="cet_text" format="string" />
         <attr name="cet_countable" format="boolean"/>
+        <attr name="cet_editable" format="boolean"/>
     </declare-styleable>
     <declare-styleable name="LengthLimitEditText">
         <attr name="text_length_max" format="integer" />
