@@ -9,6 +9,8 @@ import android.util.TypedValue
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -126,7 +128,7 @@ class CountableEditText : ConstraintLayout {
         drawableView.takeIf {
             drawsize > 0
         }?.let {
-            it.updateLayoutParams<LayoutParams> {
+            it.updateLayoutParams<ViewGroup.LayoutParams> {
                 width = drawsize.toInt()
                 height = drawsize.toInt()
             }
@@ -136,7 +138,7 @@ class CountableEditText : ConstraintLayout {
         clearView.takeIf {
             clearDrawableSizeWidth > 0 && clearDrawableSizeHeight > 0
         }?.let {
-            it.updateLayoutParams<LayoutParams> {
+            it.updateLayoutParams<ViewGroup.LayoutParams> {
                 width = clearDrawableSizeWidth.toInt()
                 height = clearDrawableSizeHeight.toInt()
             }
@@ -164,7 +166,7 @@ class CountableEditText : ConstraintLayout {
         editView.setPadding(0)
         editView.gravity = Gravity.CENTER_VERTICAL or Gravity.START
         editView.addTextChangedListener(textWatcher)
-        editView.updateLayoutParams<LayoutParams> {
+        editView.updateLayoutParams<FrameLayout.LayoutParams> {
             leftMargin = drawPadding.toInt()
             rightMargin = drawPadding.toInt()
         }

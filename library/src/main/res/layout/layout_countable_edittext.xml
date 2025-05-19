@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/countable_edittext_drawable"
@@ -12,32 +14,40 @@
         android:scaleType="fitCenter"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:background="#ff0000" />
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <com.savion.countableedit.LengthLimitEditText
-        android:id="@+id/countable_edittext_input"
+    <FrameLayout
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:gravity="center_vertical"
-        android:textColor="@color/cet_edit_textcolor"
-        android:textColorHint="@color/cet_edit_hintcolor"
-        android:textSize="15sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/countable_edittext_count"
-        app:layout_constraintStart_toEndOf="@+id/countable_edittext_drawable"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:hint="please input" />
+        android:layout_height="match_parent"
+        android:layout_weight="1">
 
-    <View
-        android:id="@+id/countable_edittext_topmask"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/countable_edittext_input"
-        app:layout_constraintEnd_toEndOf="@+id/countable_edittext_input"
-        app:layout_constraintStart_toStartOf="@+id/countable_edittext_input"
-        app:layout_constraintTop_toTopOf="@+id/countable_edittext_input" />
+        <com.savion.countableedit.LengthLimitEditText
+            android:id="@+id/countable_edittext_input"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textColor="@color/cet_edit_textcolor"
+            android:textColorHint="@color/cet_edit_hintcolor"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/countable_edittext_count"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toEndOf="@+id/countable_edittext_drawable"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:hint="please input please input please input please input please input" />
+
+        <View
+            android:id="@+id/countable_edittext_topmask"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/countable_edittext_input"
+            app:layout_constraintEnd_toEndOf="@+id/countable_edittext_input"
+            app:layout_constraintStart_toStartOf="@+id/countable_edittext_input"
+            app:layout_constraintTop_toTopOf="@+id/countable_edittext_input" />
+    </FrameLayout>
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/countable_edittext_count"
@@ -64,4 +74,4 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:visibility="visible" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>
