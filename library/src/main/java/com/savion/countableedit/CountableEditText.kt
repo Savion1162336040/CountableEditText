@@ -7,13 +7,15 @@ import android.text.Editable
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.Gravity
-import android.view.ViewGroup
+import android.view.LayoutInflater
+import android.view.View
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.setPadding
+import androidx.core.view.updateLayoutParams
 
-class CountableEditText : LinearLayout {
+class CountableEditText : ConstraintLayout {
     private var outOfRangeCall: () -> Unit = {}
     private var maxLength: Int = 0
     private var cetText = ""
@@ -28,15 +30,18 @@ class CountableEditText : LinearLayout {
                 super.afterTextChanged(s)
                 cetText = s.toString()
                 updateCountContent(cetText)
+                updateClear()
             }
         }
     }
 
-    private var drawableView: ImageView? = null
-    private var countView: TextView? = null
-    private val editView by lazy(LazyThreadSafetyMode.NONE) {
-        LengthLimitEditText(context, maxLength) { outOfRangeCall() }
-    }
+    private val drawableView: ImageView
+    private val countView: TextView
+    private val editView: LengthLimitEditText
+    private val clearView: ImageView
+    private val topMask: View
+
+    private var cetListener: CetListener? = null
 
     constructor(context: Context) : this(context, null)
     constructor(context: Context, attributeSet: AttributeSet?) : this(context, attributeSet, 0)
@@ -53,6 +58,13 @@ class CountableEditText : LinearLayout {
         var drawable: Drawable? = null
         var drawPadding = 0f
         var drawsize: Float = 0f
+        var clearDrawable: Drawable? = null
+        var clearDrawableSizeWidth: Float = 0f
+        var clearDrawableSizeHeight: Float = 0f
+        var clearDrawablePaddingStart: Float = 0f
+        var clearDrawablePaddingEnd: Float = 0f
+        var clearDrawablePaddingTop: Float = 0f
+        var clearDrawablePaddingBottom: Float = 0f
         attributeSet?.let {
             val t = context.obtainStyledAttributes(it, R.styleable.CountableEditText)
             textColor = t.getColor(R.styleable.CountableEditText_cet_textcolor, Color.BLACK)
@@ -70,24 +82,73 @@ class CountableEditText : LinearLayout {
             maxLength = t.getInt(R.styleable.CountableEditText_cet_max_length, 0)
             cetCountable = t.getBoolean(R.styleable.CountableEditText_cet_countable, cetCountable)
             cetEditable = t.getBoolean(R.styleable.CountableEditText_cet_editable, cetEditable)
+            clearDrawable = t.getDrawable(R.styleable.CountableEditText_cet_clearDrawable)
+            clearDrawableSizeWidth = t.getDimension(
+                R.styleable.CountableEditText_cet_clearDrawableWidth,
+                clearDrawableSizeWidth
+            )
+            clearDrawableSizeHeight = t.getDimension(
+                R.styleable.CountableEditText_cet_clearDrawableHeight,
+                clearDrawableSizeHeight
+            )
+            clearDrawablePaddingStart = t.getDimension(
+                R.styleable.CountableEditText_cet_clearDrawablePaddingStart,
+                clearDrawablePaddingStart
+            )
+            clearDrawablePaddingEnd = t.getDimension(
+                R.styleable.CountableEditText_cet_clearDrawablePaddingEnd,
+                clearDrawablePaddingEnd
+            )
+            clearDrawablePaddingTop = t.getDimension(
+                R.styleable.CountableEditText_cet_clearDrawablePaddingTop,
+                clearDrawablePaddingTop
+            )
+            clearDrawablePaddingBottom = t.getDimension(
+                R.styleable.CountableEditText_cet_clearDrawablePaddingBottom,
+                clearDrawablePaddingBottom
+            )
             t.recycle()
         }
-
-        orientation = HORIZONTAL
-        gravity = Gravity.CENTER_VERTICAL
+        val container =
+            LayoutInflater.from(context).inflate(R.layout.layout_countable_edittext, this, true)
+        drawableView = container.findViewById(R.id.countable_edittext_drawable)
+        editView = container.findViewById(R.id.countable_edittext_input)
+        countView = container.findViewById(R.id.countable_edittext_count)
+        clearView = container.findViewById(R.id.countable_edittext_clear)
+        topMask = container.findViewById(R.id.countable_edittext_topmask)
 
         drawable?.let {
-            drawableView = ImageView(context).apply {
-                setImageDrawable(it)
-                scaleType = ImageView.ScaleType.FIT_CENTER
+            drawableView.visibility = View.VISIBLE
+            drawableView.setImageDrawable(it)
+        } ?: run {
+            drawableView.visibility = View.GONE
+        }
+        drawableView.takeIf {
+            drawsize > 0
+        }?.let {
+            it.updateLayoutParams<LayoutParams> {
+                width = drawsize.toInt()
+                height = drawsize.toInt()
             }
-            addView(
-                drawableView,
-                LayoutParams(
-                    drawsize.toInt(),
-                    drawsize.toInt()
-                )
-            )
+        }
+
+        clearView.setImageDrawable(clearDrawable)
+        clearView.takeIf {
+            clearDrawableSizeWidth > 0 && clearDrawableSizeHeight > 0
+        }?.let {
+            it.updateLayoutParams<LayoutParams> {
+                width = clearDrawableSizeWidth.toInt()
+                height = clearDrawableSizeHeight.toInt()
+            }
+        }
+        clearView.setPadding(
+            clearDrawablePaddingStart.toInt(),
+            clearDrawablePaddingTop.toInt(),
+            clearDrawablePaddingEnd.toInt(),
+            clearDrawablePaddingBottom.toInt()
+        )
+        clearView.setOnClickListener {
+            editView.text = null
         }
 
         cetText = text
@@ -102,14 +163,19 @@ class CountableEditText : LinearLayout {
         editView.isEnabled = cetEditable
         editView.setPadding(0)
         editView.gravity = Gravity.CENTER_VERTICAL or Gravity.START
-        addView(editView, LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT).apply {
-            weight = 1f
+        editView.addTextChangedListener(textWatcher)
+        editView.updateLayoutParams<LayoutParams> {
             leftMargin = drawPadding.toInt()
             rightMargin = drawPadding.toInt()
-        })
-        editView.addTextChangedListener(textWatcher)
+        }
+
+        topMask.visibility = if (cetEditable) View.GONE else View.VISIBLE
+        topMask.setOnClickListener {
+            performClick()
+        }
 
         setCountable(cetCountable)
+        updateClear()
     }
 
     override fun onDetachedFromWindow() {
@@ -118,32 +184,33 @@ class CountableEditText : LinearLayout {
     }
 
     private fun updateCountContent(text: String?) {
-        countView?.let { view ->
+        countView.takeIf { view ->
+            view.text != text
+        }?.let { view ->
             val current = text?.takeIf {
                 it.isNotEmpty()
             }?.let {
                 minOf(it.length, maxLength)
             } ?: 0
             view.text = "${current}/${maxLength}"
+            cetListener?.onTextChange(text)
+        }
+    }
+
+    private fun updateClear() {
+        clearView.takeIf {
+            it.drawable != null
+        }?.let {
+            clearView.visibility = if (editView.text.isNullOrEmpty()) View.GONE else View.VISIBLE
         }
     }
 
     fun setCountable(enable: Boolean) {
         this.cetCountable = enable
-        if (cetCountable && countView == null) {
-            countView = TextView(context)
-            countView?.setTextSize(TypedValue.COMPLEX_UNIT_PX, countTextSize)
-            countView?.setTextColor(countTextColor)
-
-            updateCountContent(cetText)
-            addView(
-                countView,
-                LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT
-                )
-            )
-        }
+        countView.setTextSize(TypedValue.COMPLEX_UNIT_PX, countTextSize)
+        countView.setTextColor(countTextColor)
+        countView.visibility = if (enable) View.VISIBLE else View.GONE
+        updateCountContent(cetText)
     }
 
     fun getCetHint(): String? {
@@ -172,5 +239,16 @@ class CountableEditText : LinearLayout {
         }
     }
 
+    fun setCetDrawable(drawable: Drawable?) {
+        drawableView.visibility = if (drawable != null) View.VISIBLE else View.GONE
+        drawableView.setImageDrawable(drawable)
+    }
 
+    fun setCetListener(listener: CetListener) {
+        this.cetListener = listener
+    }
+
+    interface CetListener {
+        fun onTextChange(text: String?)
+    }
 }

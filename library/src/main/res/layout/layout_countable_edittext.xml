@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/countable_edittext_drawable"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:background="#ff0000" />
+
+    <com.savion.countableedit.LengthLimitEditText
+        android:id="@+id/countable_edittext_input"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:gravity="center_vertical"
+        android:textColor="@color/cet_edit_textcolor"
+        android:textColorHint="@color/cet_edit_hintcolor"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/countable_edittext_count"
+        app:layout_constraintStart_toEndOf="@+id/countable_edittext_drawable"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:hint="please input" />
+
+    <View
+        android:id="@+id/countable_edittext_topmask"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        android:background="#6f000000"
+        app:layout_constraintBottom_toBottomOf="@+id/countable_edittext_input"
+        app:layout_constraintEnd_toEndOf="@+id/countable_edittext_input"
+        app:layout_constraintStart_toStartOf="@+id/countable_edittext_input"
+        app:layout_constraintTop_toTopOf="@+id/countable_edittext_input" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/countable_edittext_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0/0"
+        android:textColor="@color/cet_count_textcolor"
+        android:textSize="12sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/countable_edittext_clear"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/countable_edittext_clear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="2dp"
+        android:scaleType="fitCenter"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

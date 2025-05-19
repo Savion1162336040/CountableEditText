@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="cet_count_textcolor">#000000</color>
+    <color name="cet_edit_textcolor">#000000</color>
+    <color name="cet_edit_hintcolor">#8a8a8a</color>
+</resources>

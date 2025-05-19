@@ -15,6 +15,13 @@
         <attr name="cet_text" format="string" />
         <attr name="cet_countable" format="boolean"/>
         <attr name="cet_editable" format="boolean"/>
+        <attr name="cet_clearDrawable" format="reference"/>
+        <attr name="cet_clearDrawableWidth" format="dimension"/>
+        <attr name="cet_clearDrawableHeight" format="dimension"/>
+        <attr name="cet_clearDrawablePaddingStart" format="dimension"/>
+        <attr name="cet_clearDrawablePaddingEnd" format="dimension"/>
+        <attr name="cet_clearDrawablePaddingTop" format="dimension"/>
+        <attr name="cet_clearDrawablePaddingBottom" format="dimension"/>
     </declare-styleable>
     <declare-styleable name="LengthLimitEditText">
         <attr name="text_length_max" format="integer" />
